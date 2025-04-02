@@ -1,0 +1,30 @@
+#define GROUP_PIN(g,p) ((g<<16) | (p))
+
+/ {
+	100ask_led@0 {
+		compatible = "100ask,leddrv";
+		pin = <GROUP_PIN(3, 1)>;
+	};
+
+	100ask_led@1 {
+		compatible = "100ask,leddrv";
+		pin = <GROUP_PIN(5, 8)>;
+	};
+
+};
+
+
+/ {
+    my_leds {
+        compatible = "hpp,generic-led";
+        status = "okay";
+
+        led1 {
+            label = "sys-led";
+            bank = <5>;    // GPIO5
+            pin = <3>;     // GPIO5_3
+			num = <0>;     //编号0
+            active-low = <1>; // 低电平有效
+        };
+    };
+};

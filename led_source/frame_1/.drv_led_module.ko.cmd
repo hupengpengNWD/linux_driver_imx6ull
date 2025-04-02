@@ -1,0 +1,1 @@
+cmd_/home/book/study/Linux-Driver/my_drv/led_source/drv_led_module.ko := arm-buildroot-linux-gnueabihf-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/book/study/Linux-Driver/my_drv/led_source/drv_led_module.ko /home/book/study/Linux-Driver/my_drv/led_source/drv_led_module.o /home/book/study/Linux-Driver/my_drv/led_source/drv_led_module.mod.o ;  true
