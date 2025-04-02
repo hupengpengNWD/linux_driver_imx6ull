@@ -103,11 +103,20 @@ static ssize_t gpio_key_drv_read (struct file *file, char __user *buf, size_t si
 	
 	/* 缓冲区不为空时 is_key_buf_empty（）返回0，!0=1
 	   缓冲区为空时 is_key_buf_empty（）返回1， !1=0
-	   不为空时继续向下执行，返回按键值
+	   不为空时，不休眠，继续向下执行，返回按键值
 	   为空时，使当前进程进入睡眠状态
 	*/
 
-	/* 休眠进程 */
+/*
+	下面的进程指的是gpio_key_wait等待队列中的进程（载gpio_key_drv_poll函数中会向这个队列里添加进程）
+	当 !is_key_buf_empty() == 1（真）：
+		条件满足，进程不会休眠，直接继续执行后续代码 
+	当 !is_key_buf_empty() == 0（假）：
+		条件不满足，进程进入休眠，直到满足下列条件之一：
+		 a、其他代码调用 wake_up_interruptible(&gpio_key_wait) 且 !is_key_buf_empty() 变为真。
+		 b、收到信号（如 Ctrl+C）中断休眠。
+		进程退出休眠继续执行后续代码
+*/
 	wait_event_interruptible(gpio_key_wait, !is_key_buf_empty());
 	key = get_key();
 	err = copy_to_user(buf, &key, 4);
